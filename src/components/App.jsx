@@ -6,12 +6,17 @@ import css from './App.module.css';
 export class App extends Component {
   constructor() {
     super();
-
+    console.log('constructor');
     this.state = {
-      contacts: [],
+      contacts: this.getLocalContacts(),
       filter: '',
     };
   }
+  getLocalContacts = () => {
+    const localContacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+    return localContacts;
+  };
+
   filterValueChange = evt => {
     this.setState({ filter: evt.currentTarget.value.trim() });
   };
@@ -28,11 +33,26 @@ export class App extends Component {
     this.setState(prevState => ({
       contacts: [...prevState.contacts, contact],
     }));
+    this.addLocalContact(contact);
+  };
+  addLocalContact = contact => {
+    const localContacts = this.getLocalContacts();
+    localContacts.push(contact);
+    localStorage.setItem('contacts', JSON.stringify(localContacts));
   };
   deleteContact = contactToDelete => {
     const { contacts } = this.state;
     let newContacts = contacts.filter(contact => contact !== contactToDelete);
     this.setState({ contacts: newContacts });
+    this.deleteLocalContact(contactToDelete);
+  };
+  deleteLocalContact = contact => {
+    const localContacts = this.getLocalContacts();
+    const index = localContacts.findIndex(localContact => {
+      return localContact.id === contact.id;
+    });
+    localContacts.splice(index, 1);
+    localStorage.setItem('contacts', JSON.stringify(localContacts));
   };
   render() {
     const { filter, contacts } = this.state;
