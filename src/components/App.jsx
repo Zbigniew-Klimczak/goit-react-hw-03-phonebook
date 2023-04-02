@@ -6,11 +6,13 @@ import css from './App.module.css';
 export class App extends Component {
   constructor() {
     super();
-    console.log('constructor');
     this.state = {
-      contacts: this.getLocalContacts(),
+      contacts: [],
       filter: '',
     };
+  }
+  componentDidMount() {
+    this.setState({ contacts: this.getLocalContacts() });
   }
   getLocalContacts = () => {
     const localContacts = JSON.parse(localStorage.getItem('contacts') || '[]');
